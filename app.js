@@ -20,6 +20,7 @@ function SelectRandomQuestion() {
 function PrintQuestionOut(randomQuestion) {
     var question = randomQuestion.question
 
+    console.log("\n");
     console.log(question);
 
     for (var i = 0; i < randomQuestion.answer.length; i++) {
@@ -29,16 +30,24 @@ function PrintQuestionOut(randomQuestion) {
 
 function UserAnswer(randomQuestion) {
     var userAnswer = prompt("Answer the question printed in the console (use the number to answer)");
+    var userScore = 0;
 
     return function() {
         var answer = randomQuestion.answer[userAnswer];
-        answer === randomQuestion.correctAnswer? console.log("The answer is correct") : console.log("The answer is wrong");
+        if(answer === randomQuestion.correctAnswer)
+        {
+            userScore += 1; 
+            console.log("The answer is correct, you earn 1 point");
+            console.log("Your score is " + userScore);
+
+        }else{
+            console.log("The answer is wrong");
+        }
+
     }
 }
 
 var randomQuestion = SelectRandomQuestion();
 PrintQuestionOut(randomQuestion);
 UserAnswer(randomQuestion)();
-
-
 
