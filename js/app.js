@@ -1,11 +1,13 @@
 function QuestionApp() {
+  var score = 0;
+  var selectedQuestion = null;
+
   function Question(question, options, correctAnswer) {
     this.question = question;
     this.options = options;
     this.correctAnswer = correctAnswer;
   }
-  
-  
+
   var questionList = [
     new Question("¿Cuál es la capital de México?", ["Puerto", "Santo Domingo", "Mexico City"], 3),
     new Question("¿Cuál es la capital de Haiti?", ["Puerto Principe", "Santo Domingo", "Mexico City"], 1),
@@ -19,8 +21,7 @@ function QuestionApp() {
     var random = Math.floor(Math.random() * totalQuestion);
     return questionList[random];
   }
-  
-  
+    
   function displayQuestion(question) {
     console.log(question.question);
     question.options.forEach(function(q, index) {
@@ -28,21 +29,59 @@ function QuestionApp() {
     });
   }
 
+  function displayScore() {
+    console.log("You're Current Score is: " + score);
+    console.log("-----------------------------------")
+  }
+
+  function incrementScore() {
+    return function() {
+      return ++score;
+    }
+  }
+
+  function randomQuestionDisplay() {
+    selectedQuestion  = randomQuestion();
+    displayQuestion(selectedQuestion);
+  }
+
+  function checkAnswer(userAnswer) {
+    if(selectedQuestion.correctAnswer === Number(userAnswer)) {
+      console.log("Correct"); 
+      incrementScore()();
+      return;
+    } 
+  
+    console.log("Incorrect");
+  }
+
   return {
-    question: randomQuestion,
-    display: displayQuestion
+    displayScore: displayScore,
+    displayRandomQuestion: randomQuestionDisplay,
+    verifyAnswer: checkAnswer
   }
 }
 
+
 var API = QuestionApp();
 
- var selectedQuestion  = API.question();
- API.display(selectedQuestion);
+var respond = "";
 
-var respond = prompt();
 
-var message = selectedQuestion.correctAnswer === Number(respond) ? "Correct" : "Incorrect";
+do {
+  API.displayRandomQuestion();
+  respond = prompt();
+  API.verifyAnswer(respond);
+  API.displayScore();
+}
+while(respond != "exit")
 
-console.log(message);
+
+console.log("********** Thanks for play **********");
+ 
+
+
+
+
 
 
