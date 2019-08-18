@@ -1,77 +1,48 @@
-$(function(){
-
-  function Player(name, id, active) {
-    this.name = ko.observable(name);
-    this.point = ko.observable(0);
-    this.id = ko.observable(id);
-    this.active = ko.observable(active);
-    this.currentPoint = ko.observable(0);
+function QuestionApp() {
+  function Question(question, options, correctAnswer) {
+    this.question = question;
+    this.options = options;
+    this.correctAnswer = correctAnswer;
+  }
+  
+  
+  var questionList = [
+    new Question("¿Cuál es la capital de México?", ["Puerto", "Santo Domingo", "Mexico City"], 3),
+    new Question("¿Cuál es la capital de Haiti?", ["Puerto Principe", "Santo Domingo", "Mexico City"], 1),
+    new Question("¿Cuál es la capital de RD?", ["Puerto", "Santo Domingo", "Mexico City"], 2),
+    new Question("¿Cuál es la capital de EUU?", ["Washington, D.C.", "Santo Domingo", "DC"], 1),
+    new Question("¿Cuál es la capital de Brasil?", ["Puerto", "Brasilia", "Mexico City"], 2)
+  ];
+  
+  function randomQuestion() {
+    var totalQuestion = questionList.length;
+    var random = Math.floor(Math.random() * totalQuestion);
+    return questionList[random];
+  }
+  
+  
+  function displayQuestion(question) {
+    console.log(question.question);
+    question.options.forEach(function(q, index) {
+      console.log((index + 1) + " : " + q)
+    });
   }
 
-  function viewModel(){
-    var self = this;
+  return {
+    question: randomQuestion,
+    display: displayQuestion
+  }
+}
 
-    self.playerOne = ko.observable(new Player("Player-1", 1, true));
-    self.playerTwo = ko.observable(new Player("Player-2", 2, false));
-    self.scoreForWin = ko.observable(20);
-    self.dice = ko.observable(1);
-    
-    self.playerOneIsActive = ko.computed(function() {
-        return self.playerOne().active();
-    });
+var API = QuestionApp();
 
-    self.imageSrc = ko.computed(function() {
-      if(self.dice() > 0) return "image/dice-" + self.dice() + ".png";
-      return "image/dice-1.png";
-    });
+ var selectedQuestion  = API.question();
+ API.display(selectedQuestion);
 
-    self.visibleDice = ko.computed(function() {
-      return self.dice() > 0;
-    });
+var respond = prompt();
 
-    self.userActive = ko.computed(function() {
-      if(self.playerOne().active()) return self.playerOne();
-      return self.playerTwo();
-    });
+var message = selectedQuestion.correctAnswer === Number(respond) ? "Correct" : "Incorrect";
+1
+console.log(message);
 
-    function changeUserActive() {
 
-      if(self.userActive() == self.playerOne()) {
-        self.playerTwo().active(true);
-        self.playerOne().active(false);
-      } else {
-        self.playerOne().active(true);
-        self.playerTwo().active(false);
-      }
-
-    }
-
-    self.rollDice = function() {
-
-      var currentTotal = self.userActive().currentPoint();
-      self.dice(Math.floor(Math.random() * 6) + 1);
-
-      if(self.dice() !== 1) {
-        self.userActive().currentPoint(self.dice() + currentTotal);
-      } else {
-        self.userActive().currentPoint(0);
-        changeUserActive();
-      }
-    }
-
-    self.hold = function() {
-      var point = self.userActive().point();
-      self.userActive().point(point + self.userActive().currentPoint());
-      if(self.userActive().point() >= self.scoreForWin()) {
-        alert(self.userActive().name() + "Win");
-        return;
-      }
-      self.userActive().currentPoint(0);
-      changeUserActive();
-      self.dice(0);
-    }
-  }  
-
-  ko.applyBindings(new viewModel());
-
-});
