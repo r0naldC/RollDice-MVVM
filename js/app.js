@@ -42,7 +42,7 @@ var API = QuestionApp();
 var respond = prompt();
 
 var message = selectedQuestion.correctAnswer === Number(respond) ? "Correct" : "Incorrect";
-1
+
 console.log(message);
 
 
